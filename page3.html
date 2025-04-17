@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>高度な操作 | Git & GitHub グラフィックガイド</title>
+    <link rel="stylesheet" href="styles.css" />
+    <!-- Mermaid.js script -->
+    <script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+    <script>
+      mermaid.initialize({ startOnLoad: true, theme: "default" });
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <h1 class="header-title">🔧 Gitの高度な操作</h1>
+        <div class="header-info">
+          <p>より効率的な開発ワークフローのために</p>
+        </div>
+      </header>
+
+      <div class="content">
+        <div class="column">
+          <div class="card primary">
+            <h2><span class="icon">📚</span>リベース</h2>
+            <div class="hand-drawn">
+              <!-- prettier-ignore -->
+              <div class="mermaid">
+                graph LR
+                    subgraph Before_Rebase
+                        A --> B --> C["C (main)"];
+                        B --> D --> E["E (feature)"];
+                    end
+                    
+                    subgraph After_Rebase
+                        A2[A] --> B2[B] --> C2["C (main)"];
+                        C2 --> D2[D'] --> E2["E' (feature)"];
+                        style D2 fill:#f9f,stroke:#333,stroke-width:2px
+                        style E2 fill:#f9f,stroke:#333,stroke-width:2px
+                    end
+                    
+                    Before_Rebase --> After_Rebase
+                    style Before_Rebase fill:#eee,stroke:#ccc,stroke-width:2px
+                    style After_Rebase fill:#eee,stroke:#ccc,stroke-width:2px
+              </div>
+
+              <div class="explanation" style="margin-top: 15px">
+                <p>
+                  <strong>左 (Before_Rebase):</strong>
+                  <code>main</code
+                  >ブランチのコミット<code>B</code>から<code>feature</code>ブランチが分岐し、<code>D</code>,
+                  <code>E</code
+                  >が追加されています。<code>main</code>にはその後<code>C</code>が追加されました。
+                </p>
+                <p>
+                  <strong>右 (After_Rebase):</strong>
+                  <code>git rebase main</code
+                  >を実行後。<code>feature</code>ブランチの変更(<code>D</code>,
+                  <code>E</code
+                  >)が<code>main</code>の最新コミット<code>C</code>の上に移動され、新しいコミット<code>D'</code>,
+                  <code>E'</code
+                  >として再適用されました。これにより履歴が直線的になります。
+                </p>
+                <p>
+                  <strong>注意:</strong>
+                  リベースは履歴を書き換えるため、共有ブランチでの使用は慎重に行う必要があります。
+                </p>
+              </div>
+            </div>
+            <h4>リベースの基本</h4>
+            <div class="code-block">
+              <p class="code-comment"># feature ブランチをmainにリベース</p>
+              <p>git checkout feature</p>
+              <p>git rebase main</p>
+            </div>
+            <div class="note">
+              <p>
+                リベースは<span class="marker">歴史を書き換え</span
+                >、履歴をきれいに保ちます
+              </p>
+            </div>
+            <div class="warning">
+              <p>
+                既にプッシュした共有ブランチでは<span class="marker"
+                  >リベース厳禁</span
+                >です！
+              </p>
+            </div>
+          </div>
+
+          <div class="card secondary">
+            <h2><span class="icon">📦</span>スタッシュ</h2>
+            <div class="hand-drawn">
+              <!-- prettier-ignore -->
+              <div class="mermaid">
+                graph LR
+                    A["作業ディレクトリ<br>📄 (変更あり)"] -- git stash --> B["スタッシュ領域<br>📦"];
+                    B["スタッシュ領域<br>📦"] -- git stash apply --> C["作業ディレクトリ<br>📄 (復元)"];
+                    B["スタッシュ領域<br>📦"] -- git stash pop --> D["作業ディレクトリ<br>📄 (復元+削除)"];
+                
+                    style A fill:#fff,stroke:#333,stroke-width:2px
+                    style B fill:#eee,stroke:#999,stroke-width:2px
+                    style C fill:#fff,stroke:#333,stroke-width:2px
+                    style D fill:#fff,stroke:#333,stroke-width:2px
+              </div>
+            </div>
+            <h4>作業を一時保存</h4>
+            <div class="code-block">
+              <p class="code-comment"># 変更を保存</p>
+              <p>git stash save "作業中の変更"</p>
+              <p class="code-comment"># スタッシュ一覧表示</p>
+              <p>git stash list</p>
+              <p class="code-comment"># 最新の保存を復元</p>
+              <p>git stash apply</p>
+              <p class="code-comment"># スタッシュを削除</p>
+              <p>git stash drop</p>
+              <p class="code-comment"># 復元と削除を同時に</p>
+              <p>git stash pop</p>
+            </div>
+            <div class="tip">
+              <p>
+                急な割り込み作業が入った時に<span class="marker">便利</span
+                >です！
+              </p>
+            </div>
+          </div>
+
+          <div class="card accent">
+            <h2><span class="icon">🏷️</span>タグとリリース</h2>
+            <h4>タグの作成と管理</h4>
+            <div class="code-block">
+              <p class="code-comment"># 軽量タグの作成</p>
+              <p>git tag v1.0.0</p>
+              <p class="code-comment"># 注釈付きタグ（推奨）</p>
+              <p>git tag -a v1.0.0 -m "バージョン1.0.0リリース"</p>
+              <p class="code-comment"># 特定のコミットにタグ付け</p>
+              <p>git tag -a v1.0.0 9fceb02 -m "バージョン1.0.0"</p>
+              <p class="code-comment"># タグの一覧表示</p>
+              <p>git tag</p>
+              <p class="code-comment"># タグをリモートにプッシュ</p>
+              <p>git push origin v1.0.0</p>
+              <p class="code-comment"># すべてのタグをプッシュ</p>
+              <p>git push origin --tags</p>
+            </div>
+            <div class="hand-drawn">
+              <h4>GitHubでのリリース作成</h4>
+              <ol>
+                <li>「Releases」セクションへ移動</li>
+                <li>「Draft a new release」をクリック</li>
+                <li>タグを選択または新規作成</li>
+                <li>タイトルと説明を記入</li>
+                <li>必要に応じてバイナリをアップロード</li>
+                <li>「Publish release」をクリック</li>
+              </ol>
+            </div>
+            <div class="note">
+              <p>
+                タグは<span class="marker">重要なコミット</span
+                >やリリースポイントに付けましょう
+              </p>
+            </div>
+          </div>
+
+          <div class="card primary">
+            <h2><span class="icon">🧹</span>履歴の修正</h2>
+            <h4>コミット修正</h4>
+            <div class="code-block">
+              <p class="code-comment"># 直前のコミットメッセージを修正</p>
+              <p>git commit --amend -m "新しいコミットメッセージ"</p>
+              <p class="code-comment">
+                # ファイルを追加して直前のコミットを修正
+              </p>
+              <p>git add 忘れたファイル.txt</p>
+              <p>git commit --amend</p>
+            </div>
+            <h4>複数コミットの整理</h4>
+            <div class="code-block">
+              <p class="code-comment"># 直近3つのコミットを整理</p>
+              <p>git rebase -i HEAD~3</p>
+            </div>
+            <div class="rebase-edit-example">
+              <p>pick 2c6a45b コミット1</p>
+              <p>squash 9cb393a コミット2</p>
+              <p>pick 964df60 コミット3</p>
+            </div>
+            <div class="tip">
+              <p>
+                <code>git rebase -i</code>では<span class="marker"
+                  >コミットの順序変更</span
+                >も可能です
+              </p>
+            </div>
+          </div>
+
+          <div class="card secondary">
+            <h2><span class="icon">🔍</span>検索とフィルタリング</h2>
+            <h4>特定の変更を探す</h4>
+            <div class="code-block">
+              <p class="code-comment"># ファイル内の特定の文字列の変更履歴</p>
+              <p>git log -p -S "検索文字列" -- パス/ファイル.txt</p>
+              <p class="code-comment"># 正規表現で検索</p>
+              <p>git log -p -G "regex" -- パス/ファイル.txt</p>
+              <p class="code-comment"># 特定の作者のコミット</p>
+              <p>git log --author="username"</p>
+              <p class="code-comment"># 日付範囲で検索</p>
+              <p>git log --after="2023-01-01" --before="2023-12-31"</p>
+            </div>
+            <h4>特定のコミットを見つける</h4>
+            <div class="code-block">
+              <p class="code-comment"># バグが発生したコミットを二分探索</p>
+              <p>git bisect start</p>
+              <p>git bisect bad # 現在のコミットは問題あり</p>
+              <p>git bisect good v1.0.0 # v1.0.0は正常</p>
+              <p class="code-comment"># テスト後、結果に応じて</p>
+              <p>git bisect good # または git bisect bad</p>
+              <p class="code-comment"># 終了</p>
+              <p>git bisect reset</p>
+            </div>
+            <div class="note">
+              <p>
+                <code>git bisect</code>は<span class="marker">バグ原因</span
+                >の特定に非常に効果的です
+              </p>
+            </div>
+          </div>
+
+          <div class="card primary">
+            <h2><span class="icon">⚠️</span>問題解決</h2>
+            <h4>コンフリクト解決</h4>
+            <div class="hand-drawn">
+              <div class="conflict-example">
+                <p class="conflict-marker">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</p>
+                <p class="current-change">現在のブランチの変更</p>
+                <p class="conflict-marker">=======</p>
+                <p class="incoming-change">取り込むブランチの変更</p>
+                <p class="conflict-marker">
+                  &gt;&gt;&gt;&gt;&gt;&gt;&gt; feature-branch
+                </p>
+              </div>
+            </div>
+            <div class="tip">
+              <p>
+                コンフリクト解決後は<span class="marker">変更を追加</span
+                >してから<span class="marker">コミット</span>します
+              </p>
+            </div>
+            <h4>その他のトラブルシューティング</h4>
+            <div class="code-block">
+              <p class="code-comment"># 変更を一時的に退避してクリーンアップ</p>
+              <p>git stash</p>
+              <p>git reset --hard HEAD</p>
+              <p class="code-comment"># 最後の操作を取り消し</p>
+              <p>git reflog</p>
+              <p>git reset --hard HEAD@{1}</p>
+              <p class="code-comment"># 削除したブランチを復活</p>
+              <p>git reflog</p>
+              <p>git checkout -b 復活ブランチ名 コミットハッシュ</p>
+            </div>
+            <div class="warning">
+              <p>
+                <code>git reset --hard</code>は<span class="marker"
+                  >取り消せない操作</span
+                >なので注意！
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-indicator">
+        <div class="page-dot"></div>
+        <div class="page-dot"></div>
+        <div class="page-dot"></div>
+        <div class="page-dot active"></div>
+      </div>
+
+      <div class="navigation">
+        <a href="page2.html" class="nav-button back">戻る：GitHub連携</a>
+        <a href="page4.html" class="nav-button">次へ：Git&GitHubワークフロー</a>
+      </div>
+
+      <footer class="footer">
+        <p>Git & GitHub ハンズオンガイド インフォグラフィックバージョン</p>
+        <p>出典：リバースメンター制度 Git/GitHub セッション教材</p>
+      </footer>
+    </div>
+  </body>
+</html>

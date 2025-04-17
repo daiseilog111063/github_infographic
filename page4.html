@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>開発ワークフロー | Git & GitHub グラフィックガイド</title>
+    <link rel="stylesheet" href="styles.css" />
+    <!-- Mermaid.js script -->
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11.6.0/dist/mermaid.esm.min.mjs';
+      mermaid.initialize({ 
+        startOnLoad: true, 
+        theme: "default",
+        securityLevel: 'loose',
+        flowchart: { 
+          useMaxWidth: true,
+          htmlLabels: true
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <h1 class="header-title">🔄 Git & GitHub 開発ワークフロー</h1>
+        <div class="header-info">
+          <p>効率的なチーム開発のための戦略とプラクティス</p>
+        </div>
+      </header>
+
+      <div class="content">
+        <div class="column">
+          <div class="card primary">
+            <h2><span class="icon">🌊</span>GitHub Flow</h2>
+            <div class="hand-drawn">
+              <div class="mermaid">
+                graph LR
+                  subgraph "GitHub Flow"
+                    main["main"] --- m1["・"] --- m2["・"] --- m3["・"] --- m4["・"]
+                    m1 --- f1["feature/"]
+                    f1 --- f2["・"] --- f3["・"]
+                    f3 -.->|"Pull Request"| m3
+                    
+                    style main fill:#f9f9f9,stroke:#333,stroke-width:2px
+                    style m1 fill:#f5f5f5,stroke:#333,stroke-width:1px
+                    style f1 fill:#ddf1da,stroke:#333,stroke-width:1px
+                    style f2 fill:#ddf1da,stroke:#333,stroke-width:1px
+                    style f3 fill:#ddf1da,stroke:#333,stroke-width:1px
+                    style m2 fill:#f5f5f5,stroke:#333,stroke-width:1px
+                    style m3 fill:#f5f5f5,stroke:#333,stroke-width:1px
+                    style m4 fill:#f5f5f5,stroke:#333,stroke-width:1px
+
+                    classDef commitNode r:5px,fill:#fff,stroke:#333,stroke-width:1px;
+                    class m1,m2,m3,m4,f1,f2,f3 commitNode
+
+                  end
+              </div>
+            </div>
+            <div class="hand-drawn">
+              <div class="explanation" style="margin-top: 15px">
+                <ol>
+                  <li><strong>mainブランチから新しいブランチを作成</strong> - 機能開発やバグ修正のために、mainから新しいfeatureブランチを作成します</li>
+                  <li><strong>機能開発・修正を行いコミット</strong> - featureブランチ上で作業し、小さな単位でコミットを重ねます</li>
+                  <li><strong>Pull Requestを作成</strong> - 開発が完了したらPRを作成し、変更内容をチームに共有します</li>
+                  <li><strong>レビュー・議論・修正</strong> - PRへのフィードバックを受け、必要に応じて修正を行います</li>
+                  <li><strong>mainにマージ</strong> - レビューが完了したらmainブランチにマージします</li>
+                  <li><strong>デプロイ</strong> - CI/CDにより自動的に、または手動でデプロイを行います</li>
+                </ol>
+              </div>
+            </div>
+            <div class="note">
+              <p>
+                GitHub Flowは<span class="marker">シンプル</span>で<span
+                  class="marker"
+                  >効果的</span
+                >なワークフローです
+              </p>
+            </div>
+            <div class="tip">
+              <p>
+                継続的デプロイメントを前提とした<span class="marker"
+                  >シンプルな運用</span
+                >に最適です
+              </p>
+            </div>
+          </div>
+
+          <div class="card secondary">
+            <h2>
+              <span class="icon">🌐</span>GitHubを活用したコラボレーション
+            </h2>
+            <h4>コードレビュー文化の醸成</h4>
+            <div class="hand-drawn">
+              <ul>
+                <li>
+                  Pull Requestのテンプレート作成
+                  <ul class="mini">
+                    <li>変更内容の概要</li>
+                    <li>関連するIssue</li>
+                    <li>テスト方法</li>
+                    <li>スクリーンショット（UI変更時）</li>
+                  </ul>
+                </li>
+                <li>
+                  レビューのガイドライン
+                  <ul class="mini">
+                    <li>コードスタイル</li>
+                    <li>ロジックの問題</li>
+                    <li>パフォーマンス</li>
+                    <li>セキュリティ</li>
+                  </ul>
+                </li>
+                <li>GitHub Actionsによる自動テスト</li>
+                <li>PRの承認者ルール設定</li>
+              </ul>
+            </div>
+            <h4>プロジェクト管理機能</h4>
+            <div class="hand-drawn">
+              <ul>
+                <li>GitHub Projects（カンバンボード）</li>
+                <li>Milestones（マイルストーン）</li>
+                <li>Issue Templates（課題テンプレート）</li>
+                <li>Discussions（ディスカッション）</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="card accent">
+            <h2><span class="icon">🌲</span>Git Flow</h2>
+            <div class="git-flow-diagram hand-drawn">
+              <!-- prettier-ignore -->
+              <div class="mermaid">
+                graph TD
+                  master["master"] --- v1["v1.0"] --- v2["v2.0"]
+                  master --- develop["develop"]
+                  develop --- d1["・"] --- d2["・"] --- d3["・"]
+                  d1 --- feature["feature/"] --- f1["・"] --- f2["・"]
+                  f2 --- d2
+                  d2 --- release["release/"] --- r1["・"]
+                  r1 --- v1
+                  r1 --- d3
+                  v1 --- hotfix["hotfix/"] --- h1["・"]
+                  h1 --- v2
+                  h1 --- d3
+              </div>
+            </div>
+            <h4>Git Flowのブランチ構成</h4>
+            <div class="hand-drawn">
+              <ul>
+                <li><strong>master:</strong> 本番リリース用ブランチ</li>
+                <li><strong>develop:</strong> 次期リリース開発ブランチ</li>
+                <li><strong>feature/XXX:</strong> 個別機能開発ブランチ</li>
+                <li><strong>release/XXX:</strong> リリース準備ブランチ</li>
+                <li><strong>hotfix/XXX:</strong> 緊急バグ修正ブランチ</li>
+              </ul>
+            </div>
+            <div class="note">
+              <p>
+                Git Flowは<span class="marker">複雑</span>ですが、<span
+                  class="marker"
+                  >計画的なリリース</span
+                >向けに構造化されています
+              </p>
+            </div>
+          </div>
+
+          <div class="card primary">
+            <h2>
+              <span class="icon">📋</span>プロジェクトに合わせたワークフロー選び
+            </h2>
+            <h4>ワークフロー比較</h4>
+            <div class="workflow-table hand-drawn">
+              <table>
+                <tr>
+                  <th></th>
+                  <th>GitHub Flow</th>
+                  <th>Git Flow</th>
+                  <th>Trunk Based</th>
+                </tr>
+                <tr>
+                  <td>複雑さ</td>
+                  <td>シンプル</td>
+                  <td>複雑</td>
+                  <td>非常にシンプル</td>
+                </tr>
+                <tr>
+                  <td>リリース頻度</td>
+                  <td>高頻度</td>
+                  <td>計画的</td>
+                  <td>継続的</td>
+                </tr>
+                <tr>
+                  <td>向いているプロジェクト</td>
+                  <td>Web サービス</td>
+                  <td>バージョン管理ソフト</td>
+                  <td>CI/CD 環境</td>
+                </tr>
+                <tr>
+                  <td>チームサイズ</td>
+                  <td>小〜中規模</td>
+                  <td>中〜大規模</td>
+                  <td>小規模</td>
+                </tr>
+              </table>
+            </div>
+            <h4>選択のポイント</h4>
+            <div class="hand-drawn">
+              <ul>
+                <li>プロジェクトの規模</li>
+                <li>チームの経験・スキル</li>
+                <li>リリースサイクル</li>
+                <li>運用環境（開発/ステージング/本番）</li>
+                <li>CI/CD環境の有無</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="card secondary">
+            <h2><span class="icon">🛠️</span>Gitのカスタマイズとツール活用</h2>
+            <h4>Git設定のカスタマイズ</h4>
+            <div class="code-block">
+              <p class="code-comment"># ユーザー名とメールの設定</p>
+              <p>git config --global user.name "あなたの名前"</p>
+              <p>git config --global user.email "メール@example.com"</p>
+              <p class="code-comment"># エディタの設定</p>
+              <p>git config --global core.editor "code --wait"</p>
+              <p class="code-comment"># エイリアスの設定</p>
+              <p>git config --global alias.co checkout</p>
+              <p>git config --global alias.br branch</p>
+              <p>git config --global alias.ci commit</p>
+              <p>git config --global alias.st status</p>
+              <p class="code-comment"># 便利なログフォーマット</p>
+              <p>
+                git config --global alias.lg "log --graph
+                --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s
+                %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+              </p>
+            </div>
+            <h4>便利なGitツール</h4>
+            <div class="hand-drawn">
+              <ul>
+                <li>
+                  GUI クライアント
+                  <ul class="mini">
+                    <li>GitHub Desktop</li>
+                    <li>Sourcetree</li>
+                    <li>GitKraken</li>
+                  </ul>
+                </li>
+                <li>
+                  IDE 連携
+                  <ul class="mini">
+                    <li>VS Code の Git 機能</li>
+                    <li>IntelliJ の Git 統合</li>
+                  </ul>
+                </li>
+                <li>
+                  CLI 拡張
+                  <ul class="mini">
+                    <li>hub/gh（GitHub CLI）</li>
+                    <li>git-flow コマンド</li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-indicator">
+        <div class="page-dot"></div>
+        <div class="page-dot"></div>
+        <div class="page-dot"></div>
+        <div class="page-dot"></div>
+        <div class="page-dot active"></div>
+      </div>
+
+      <div class="navigation">
+        <a href="page3.html" class="nav-button back">戻る：高度な操作</a>
+        <a href="index.html" class="nav-button">最初に戻る</a>
+      </div>
+
+      <footer class="footer">
+        <p>Git & GitHub ハンズオンガイド インフォグラフィックバージョン</p>
+        <p>出典：リバースメンター制度 Git/GitHub セッション教材</p>
+      </footer>
+    </div>
+  </body>
+</html>

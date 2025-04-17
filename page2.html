@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Git/GitHub 入門 - 基本操作</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <h1 class="header-title">Git/GitHub 入門: 基本操作</h1>
+        <div class="header-info">
+          <span><i class="fas fa-book icon"></i>Part 2</span>
+          <span><i class="fas fa-clock icon"></i>学習時間: 約40分</span>
+        </div>
+      </header>
+
+      <div class="content">
+        <div class="column">
+          <div class="card primary">
+            <h2><i class="fas fa-folder-plus icon"></i>リポジトリの作成</h2>
+            <div class="workflow">
+              <h3 class="workflow-title">新しいリポジトリを作成する2つの方法</h3>
+              <div class="workflow-box">
+                <div class="workflow-step card-inner">
+                  <div class="workflow-step-title">新規作成</div>
+                  <div class="code-block">
+                    <div class="code-command">mkdir my-project</div>
+                    <div class="code-command">cd my-project</div>
+                    <div class="code-command">git init</div>
+                    <div class="code-output">Initialized empty Git repository in /path/to/my-project/.git/</div>
+                  </div>
+                  <div class="workflow-step-desc">
+                    <p><span class="marker">新しい空のリポジトリ</span>を作成します</p>
+                  </div>
+                </div>
+                
+                <div class="flow-arrow">または</div>
+                
+                <div class="workflow-step card-inner">
+                  <div class="workflow-step-title">クローン</div>
+                  <div class="code-block">
+                    <div class="code-command">git clone https://github.com/user/repo.git</div>
+                    <div class="code-output">Cloning into 'repo'...</div>
+                  </div>
+                  <div class="workflow-step-desc">
+                    <p><span class="marker">既存のリポジトリ</span>のコピーを作成します</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="note">
+              <p><code>git init</code>を実行すると、カレントディレクトリに<code>.git</code>という隠しフォルダが作成されます。
+              このフォルダには、リポジトリの全ての履歴情報が格納されます。</p>
+            </div>
+          </div>
+
+          <div class="card secondary">
+            <h2><i class="fas fa-save icon"></i>変更の記録（コミット）</h2>
+            <div class="hand-drawn">
+              <h3>Gitの3つの状態</h3>
+              <!-- Replace existing HTML diagram with Mermaid diagram -->
+              <!-- prettier-ignore -->
+              <div class="mermaid">
+                graph LR
+                    A(A 作業ディレクトリ);
+                    A -- "git add (ファイル名)" --> B(B ステージングエリア);
+                    B -- "git commit -m (コミットメッセージ)" --> C{C リポジトリ<br>.git};
+                    B -- "git restore --staged (ファイル名)" --> A;
+                    C -- "git restore (ファイル名)" --> A;
+
+                    style A fill:#fff,stroke:#333,stroke-width:2px
+                    style B fill:#eee,stroke:#999,stroke-width:1px
+                    style C fill:#ccf,stroke:#66f,stroke-width:2px
+              </div>
+              <div class="explanation" style="margin-top: 15px;">
+                <p><strong>状態間の移動:</strong></p>
+                <ul>
+                  <li>ファイルを変更すると<strong>作業ディレクトリ</strong>が更新されます。</li>
+                  <li><code>git add</code>で変更を<strong>ステージングエリア</strong>に上げ、コミット候補にします。</li>
+                  <li><code>git commit</code>でステージングエリアの内容を<strong>リポジトリ</strong>に記録します。</li>
+                  <li><code>git restore --staged</code>でステージングから戻したり、<code>git restore</code>で作業ディレクトリの変更をリポジトリの状態に戻したりもできます。</li>
+                </ul>
+              </div>
+            </div>
+            
+            <h3>基本的なコミットの流れ</h3>
+            <div class="steps-container">
+              <div class="numbered-steps">
+                <div class="step">
+                  <div class="step-number">1</div>
+                  <div class="step-content">
+                    <h4>ファイルを作成・編集 (作業ディレクトリでの作業)</h4>
+                    <div class="code-block">
+                      <div class="code-command">echo "# My Project" > README.md</div>
+                      <div class="code-command">echo "New line" >> README.md</div>
+                    </div>
+                    <p>↓ この時点での状態確認</p>
+                    <div class="code-block">
+                      <div class="code-command">git status</div>
+                      <div class="code-output">On branch main
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+        README.md
+
+nothing added to commit but untracked files present (use "git add" to track)</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="step">
+                  <div class="step-number">2</div>
+                  <div class="step-content">
+                    <h4>変更状況を確認</h4>
+                    <p>（上記 Step 1 の `git status` でも確認）</p>
+                    <div class="code-block">
+                      <div class="code-command">git status</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="step">
+                  <div class="step-number">3</div>
+                  <div class="step-content">
+                    <h4>変更をステージングに追加 (作業ディレクトリ → ステージングエリア)</h4>
+                    <p>コミットしたい変更を `git add` でステージングエリアに上げます。(上の「3つの状態」図の A → B の移動)</p>
+                    <div class="code-block">
+                      <div class="code-command">git add README.md</div>
+                      <div class="code-command">git status</div>
+                      <div class="code-output">Changes to be committed:
+(use "git restore --staged <file>..." to unstage)
+      new file:   README.md</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="step">
+                  <div class="step-number">4</div>
+                  <div class="step-content">
+                    <h4>変更をコミット (ステージングエリア → リポジトリ)</h4>
+                    <p>ステージングエリアの内容を `git commit` でリポジトリに記録します。(上の「3つの状態」図の B → C の移動)</p>
+                    <div class="code-block">
+                      <div class="code-command">git commit -m "初期ファイルを追加"</div>
+                      <div class="code-output">[main (root-commit) f7d1385] 初期ファイルを追加
+1 file changed, 1 insertion(+)</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="tip">
+              <p>複数のファイルを一度にステージングに追加するには <code>git add .</code> を使います</p>
+            </div>
+            
+            <div class="warning">
+              <p>コミットメッセージは<span class="marker">分かりやすく具体的に書く</span>ことが重要です。「何を」「なぜ」変更したのかを伝えましょう。</p>
+            </div>
+          </div>
+          
+          <div class="card accent">
+            <h2><i class="fas fa-history icon"></i>履歴の確認</h2>
+            <div class="bubble">
+              <p>プロジェクトの変更履歴を確認する方法</p>
+            </div>
+            
+            <h3>コミット履歴を見る</h3>
+            <div class="code-block">
+              <div class="code-command">git log</div>
+              <div class="code-output">commit f7d1385a9c1d5e2c9c14c4a8a45c91c777198fc5 (HEAD -> main)
+Author: あなたの名前 <your.email@example.com>
+Date:   Mon Mar 27 10:15:32 2023 +0900
+
+    初期ファイルを追加</div>
+            </div>
+            
+            <h3>シンプル表示</h3>
+            <div class="code-block">
+              <div class="code-command">git log --oneline</div>
+              <div class="code-output">f7d1385 (HEAD -> main) 初期ファイルを追加</div>
+            </div>
+            
+            <h3>変更差分を表示</h3>
+            <div class="code-block">
+              <div class="code-command">git diff</div>
+              <div class="code-output">diff --git a/README.md b/README.md
+index 21e60f8..e939bee 100644
+--- a/README.md
++++ b/README.md
+@@ -1 +1,3 @@
+-# My Project
++# My Project
++
++This is a sample project for Git tutorial.</div>
+            </div>
+            
+            <div class="tip">
+              <p><code>git log</code>に様々なオプションを追加することで、表示形式を変更できます。</p>
+              <ul>
+                <li><code>--graph</code>: ブランチのグラフィカル表示</li>
+                <li><code>--stat</code>: 変更統計情報を表示</li>
+                <li><code>-p</code>: 変更内容を詳細表示</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card primary">
+          <h2><i class="fas fa-code-branch icon"></i>ブランチ操作</h2>
+          <div class="hand-drawn">
+            <p>ブランチは<span class="marker">並行作業</span>のための機能です。異なる機能・修正を別々の開発ラインで作業できます。(Page1の概念図参照)</p>
+            
+            <!-- Replace existing diagram with Mermaid diagram from page1 -->
+            <!-- prettier-ignore -->
+            <div class="mermaid">
+              graph TD
+                  subgraph MainBranch ["mainブランチ"]
+                      direction LR
+                      commitA --> commitB;
+                      commitB --> commitC;
+                  end
+
+                  subgraph FeatureBranch ["featureブランチ"]
+                      direction LR
+                      commitB -- "git branch feature<br>git checkout feature" --> featureCommit1;
+                      featureCommit1 --> featureCommit2;
+                  end
+
+                  style MainBranch fill:#e3f2fd,stroke:#90caf9
+                  style FeatureBranch fill:#e8f5e9,stroke:#a5d6a7
+            </div>
+          </div>
+          
+          <h3>ブランチ基本操作</h3>
+          <p>ブランチを作成したり、現在の作業ブランチを切り替えたりします。Git 2.23以降は、ブランチ切り替え専用の <code>git switch</code> コマンドが推奨されています。（以前は <code>git checkout</code> がこの役割も担っていました）</p>
+          <div class="code-block">
+            <div class="code-comment">// ブランチ一覧表示</div>
+            <div class="code-command">git branch</div>
+            <div class="code-output">* main</div>
+            <div class="code-comment">---</div>
+            <div class="code-comment">// (推奨) ブランチを切り替え</div>
+            <div class="code-command">git switch feature-a</div>
+            <div class="code-output">Switched to branch 'feature-a'</div>
+            <div class="code-comment">---</div>
+            <div class="code-comment">// (推奨) 新しいブランチを作成して切り替え</div>
+            <div class="code-command">git switch -c feature-b</div>
+            <div class="code-output">Switched to a new branch 'feature-b'</div>
+            <div class="code-comment">---</div>
+            <div class="code-comment">// (古いコマンド) ブランチを切り替え</div>
+            <div class="code-command">git checkout feature-a</div>
+            <div class="code-comment">// (古いコマンド) 新しいブランチを作成して切り替え</div>
+            <div class="code-command">git checkout -b feature-b</div>
+            <div class="code-comment">---</div>
+            <div class="code-comment">// ブランチ作成のみ (切り替えはしない)</div>
+            <div class="code-command">git branch new-branch-only</div>
+          </div>
+          
+          <!-- Remove the separate note about git switch -->
+
+        </div>
+        
+        <div class="card secondary">
+          <h2><i class="fas fa-code-merge icon"></i>マージ（変更の統合）</h2>
+          <div class="explanation">
+            <p><strong>主な違い:</strong></p>
+            <ul>
+              <li><strong>Fast-forwardマージ</strong>は、統合先のブランチ(例: `main`)に、対象ブランチ(例: `feature`)が分岐した<strong>後</strong>に新しいコミットがない場合に可能です。履歴は直線的なまま保たれます。</li>
+              <li><strong>3-wayマージ</strong>は、統合先のブランチにも新しいコミットがある場合に必要となります。両方のブランチの変更を統合するための新しい「マージコミット」が作成され、分岐と統合の履歴が明確に残ります。</li>
+            </ul>
+            <p>どちらのマージが行われるかは、ブランチの履歴によって自動的に決まりますが、<code>git merge --no-ff</code> オプションを使うことで、Fast-forwardが可能な場合でも意図的にマージコミットを作成することもできます（履歴にブランチの存在を明示的に残したい場合など）。</p>
+          </div>
+
+          <!-- Container for Side-by-Side Diagrams -->
+          <div class="merge-diagrams-container">
+            <!-- 3-way Merge Diagram Item -->
+            <div class="merge-diagram-item" style="border: 1px solid #ccc; padding: 15px; border-radius: 8px;">
+                <h4 style="text-align: center; margin-bottom: 10px;">3-wayマージ (分岐あり)</h4>
+                <!-- prettier-ignore -->
+                <div class="mermaid">
+                  graph TD
+                      subgraph MainBranch ["mainブランチ"]
+                          direction LR
+                          commitA --> commitB;
+                          commitB --> commitC;
+                          commitC --> MergeCommit[meargeCommit];
+                      end
+
+                      subgraph FeatureBranch ["featureブランチ"]
+                          direction LR
+                          commitB --> featureCommit1;
+                          featureCommit1 --> featureCommit2;
+                      end
+
+                      featureCommit2 --> MergeCommit;
+
+                      style MergeCommit fill:#f9f,stroke:#333,stroke-width:2px
+                      style MainBranch fill:#e3f2fd,stroke:#90caf9
+                      style FeatureBranch fill:#e8f5e9,stroke:#a5d6a7
+                </div>
+            </div>
+
+            <!-- Fast-forward Merge Diagram Item -->
+            <div class="merge-diagram-item" style="border: 1px solid #ccc; padding: 15px; border-radius: 8px;">
+                <h4 style="text-align: center; margin-bottom: 10px;">Fast-forwardマージ (分岐なし)</h4>
+                <!-- prettier-ignore -->
+                <div class="mermaid">
+                  graph TD
+                      subgraph BeforeMergeFF_V ["マージ前"]
+                        subgraph main_before["mainブランチ(mearge前)"]
+                          A_ff_v[commitA] --> B_ff_v["commitB (main)"];
+                        end
+                        subgraph feature_before["featureブランチ(mearge前)"]
+                          B_ff_v --> C_ff_v["commitC (feature)"];
+                        end
+                      end
+      
+                        subgraph AfterMergeFF_V["mainブランチ(mearge後)"]
+                          A2_ff_v[commitA] --> B2_ff_v["commitB"] --> C2_ff_v["commitC"];
+                      end
+  
+                        BeforeMergeFF_V -- "git merge feature" --> AfterMergeFF_V;
+  
+                        style C2_ff_v fill:#f9f,stroke:#333,stroke-width:2px
+                        style BeforeMergeFF_V fill:#eee,stroke:#ccc,stroke-width:2px
+                        style AfterMergeFF_V fill:#eee,stroke:#ccc,stroke-width:2px
+                        style main_before fill:#e3f2fd,stroke:#90caf9
+                        style feature_before fill:#e8f5e9,stroke:#a5d6a7
+                </div>
+            </div>
+          </div>
+          
+          <h3>コンフリクト（競合）の解決</h3>
+          <div class="warning">
+            <p>同じファイルの同じ箇所が両方のブランチで変更されると、<span class="marker-red">コンフリクト</span>が発生します</p>
+          </div>
+          
+          <div class="code-block">
+            <div class="code-command">git merge feature-b</div>
+            <div class="code-output">Auto-merging README.md
+CONFLICT (content): Merge conflict in README.md
+Automatic merge failed; fix conflicts and then commit the result.</div>
+          </div>
+          
+          <div class="conflict-example">
+            <div class="code-block">
+              <div class="code-output"><<<<<<< HEAD
+# My Project - メインブランチの変更
+=======
+# My Project - 機能Bブランチの変更
+>>>>>>> feature-b</div>
+            </div>
+          </div>
+          
+          <div class="steps-container">
+            <div class="numbered-steps">
+              <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                  <p>コンフリクトファイルを開き、<<<<<<< HEAD と >>>>>>> feature-b の間の内容を編集</p>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                  <p>マーカー（<<<<<<< HEAD, =======, >>>>>>> feature-b）を削除</p>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                  <div class="code-block">
+                    <div class="code-command">git add README.md</div>
+                    <div class="code-command">git commit -m "Resolve merge conflict in README.md"</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Add Tip for Conflict Resolution Tools -->
+          <div class="tip" style="margin-top: 15px;">
+            <p>コンフリクトマーカー (<code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code>, <code>=======</code>, <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code>) を含むファイルを直接編集するのは大変な場合があります。VS Code などの高機能なエディタや、Sourcetree、GitKraken といったGUIツールには、コンフリクト箇所を分かりやすく表示し、どちらの変更を採用するかを視覚的に選択できる便利な機能が搭載されています。</p>
+          </div>
+        </div>
+        
+        <div class="card accent">
+          <h2><i class="fas fa-undo icon"></i>変更の取り消し</h2>
+          <div class="bubble">
+            <p>Gitでは様々な方法で変更を取り消すことができます</p>
+          </div>
+          
+          <h3>作業ディレクトリの変更を取り消す</h3>
+          <p>作業ディレクトリでのファイルへの変更を、最後のコミットの状態に戻します。</p>
+          <div class="code-block">
+            <div class="code-comment">// Git 2.23以降で推奨されるコマンド</div>
+            <div class="code-command">git restore file.txt</div>
+            <div class="code-comment">// (Git 2.23より前は `git checkout -- file.txt` が使われていました)</div>
+          </div>
+          
+          <h3>ステージング領域の変更を取り消す</h3>
+          <p>ステージングエリアに追加した変更 (`git add` した変更) を取り消し、作業ディレクトリの変更に戻します。</p>
+          <div class="code-block">
+            <div class="code-comment">// Git 2.23以降で推奨されるコマンド</div>
+            <div class="code-command">git restore --staged file.txt</div>
+            <div class="code-comment">// (Git 2.23より前は `git reset HEAD file.txt` が使われていました)</div>
+          </div>
+          
+          <h3>直前のコミットを修正</h3>
+          <div class="code-block">
+            <div class="code-command">git commit --amend -m "修正したコミットメッセージ"</div>
+          </div>
+          
+          <h3>コミットを取り消す (reset vs revert)</h3>
+          <div class="explanation" style="margin-bottom: 10px;">
+            <p>過去のコミットを取り消す代表的な方法が <code>reset</code> と <code>revert</code> ですが、履歴への影響が大きく異なります。</p>
+            <ul>
+              <li><strong><i class="fas fa-shield-alt"></i> <code>git revert</code> (安全):</strong> 指定したコミットの内容を<strong>打ち消す新しいコミットを作成</strong>します。過去の履歴自体は変更せず、安全に取り消しを行えます。共有リポジトリにプッシュ済みのコミットを取り消す場合は、基本的にこちらを使用します。</li>
+              <li><strong><i class="fas fa-exclamation-triangle"></i> <code>git reset</code> (注意):</strong> 指定したコミットまでブランチのポインタを戻し、<strong>履歴を書き換え</strong>ます。<code>--soft</code>, <code>--mixed</code>, <code>--hard</code> オプションで、書き換えた後の変更をどこに残すかを選択できますが、特に <code>--hard</code> は変更が完全に失われます。<strong style="color: red;">共有リポジトリにプッシュ済みのコミットに対して `reset` を行うと、他の開発者の履歴と矛盾が生じるため、原則として避けるべきです。</strong></li>
+            </ul>
+          </div>
+          <div class="comparison-table">
+            <table>
+              <tr>
+                <th>コマンド</th>
+                <th>説明</th>
+                <th>注意事項</th>
+              </tr>
+              <tr>
+                <td>git revert</td>
+                <td>コミットを打ち消す新しいコミットを作成</td>
+                <td>安全な方法（履歴を保持）</td>
+              </tr>
+              <tr>
+                <td>git reset --soft</td>
+                <td>コミットを取り消し、変更はステージング領域に残す</td>
+                <td>履歴を書き換える</td>
+              </tr>
+              <tr>
+                <td>git reset --mixed</td>
+                <td>コミットを取り消し、変更は作業ディレクトリに残す</td>
+                <td>履歴を書き換える</td>
+              </tr>
+              <tr>
+                <td>git reset --hard</td>
+                <td>コミットを取り消し、変更も完全に削除</td>
+                <td>注意：変更が失われる</td>
+              </tr>
+            </table>
+          </div>
+          
+          <div class="warning">
+            <p><span class="marker-red">git reset --hard</span>は変更を完全に削除するため注意が必要です。<strong>特にプッシュ済みの変更に対して安易に使用しないでください。</strong></p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="page-indicator">
+        <div class="page-dot"></div>
+        <div class="page-dot active"></div>
+        <div class="page-dot"></div>
+        <div class="page-dot"></div>
+      </div>
+      
+      <div class="navigation">
+        <a href="page1.html" class="nav-button back"><i class="fas fa-arrow-left"></i> 前へ: 基本概念とセットアップ</a>
+        <a href="page3.html" class="nav-button">次へ: GitHubとの連携 <i class="fas fa-arrow-right"></i></a>
+      </div>
+      
+      <footer class="footer">
+        <p>© 2023 Git/GitHub グラフィックチュートリアル | 作成者：あなたの名前</p>
+      </footer>
+    </div>
+  </body>
+</html>

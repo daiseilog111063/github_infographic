@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Git/GitHub 入門 - 基本概念とセットアップ</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <h1 class="header-title">Git/GitHub 入門: 基本概念とセットアップ</h1>
+        <div class="header-info">
+          <span><i class="fas fa-book icon"></i>Part 1</span>
+          <span><i class="fas fa-clock icon"></i>学習時間: 約30分</span>
+        </div>
+      </header>
+
+      <div class="content">
+        <div class="column">
+          <div class="card primary">
+            <h2><i class="fas fa-question-circle icon"></i>Gitとは？</h2>
+            <div class="hand-drawn">
+              <p>
+                <strong>なぜバージョン管理が必要？</strong>
+                ファイルの変更履歴を記録することで、「いつ、誰が、何を、なぜ変更したか」を追跡でき、誤って変更した場合も過去の状態に簡単に戻せます。複数人での共同作業もスムーズになり、新しい機能を安全に試すことも可能です。
+              </p>
+              <p>
+                Gitは<span class="marker">分散型バージョン管理システム</span
+                >です。ソフトウェア開発やドキュメント作成における変更履歴を記録・追跡します。
+              </p>
+            </div>
+            <div class="growth-steps" style="margin-top: 20px">
+              <div class="growth-step">
+                <div class="growth-step-icon">
+                  <i class="fas fa-users"></i>
+                </div>
+                <div class="growth-step-title">分散型</div>
+                <div class="growth-step-desc">
+                  中央サーバーに依存せず、各開発者がローカルに完全な履歴を持つ
+                </div>
+              </div>
+              <div class="growth-step">
+                <div class="growth-step-icon">
+                  <i class="fas fa-camera"></i>
+                </div>
+                <div class="growth-step-title">スナップショット</div>
+                <div class="growth-step-desc">
+                  変更を差分ではなく、ファイル全体のスナップショットとして保存
+                </div>
+              </div>
+              <div class="growth-step">
+                <div class="growth-step-icon">
+                  <i class="fas fa-rocket"></i>
+                </div>
+                <div class="growth-step-title">高速処理</div>
+                <div class="growth-step-desc">
+                  ローカルで操作するため、ネットワーク遅延がない
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card secondary">
+            <h2><i class="fab fa-github icon"></i>GitHubとは？</h2>
+            <p>
+              GitHubはGitリポジトリのホスティングサービスです。コードの共有、プロジェクト管理、ソーシャルコーディングなどの機能を提供します。
+            </p>
+
+            <div class="growth-steps">
+              <div class="growth-step">
+                <div class="growth-step-icon">
+                  <i class="fas fa-code-branch"></i>
+                </div>
+                <div class="growth-step-title">コード共有と協業</div>
+                <div class="growth-step-desc">
+                  複数人でのコード共有や協業開発を簡単に実現
+                </div>
+              </div>
+              <div class="growth-step">
+                <div class="growth-step-icon"><i class="fas fa-tasks"></i></div>
+                <div class="growth-step-title">プロジェクト管理</div>
+                <div class="growth-step-desc">
+                  Issues、Pull Requests、Projects機能でタスク管理
+                </div>
+              </div>
+              <div class="growth-step">
+                <div class="growth-step-icon"><i class="fas fa-code"></i></div>
+                <div class="growth-step-title">ソーシャルコーディング</div>
+                <div class="growth-step-desc">
+                  世界中の開発者とつながり、オープンソースに貢献
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card primary">
+            <h2>
+              <i class="fas fa-link icon"></i>ローカル (Git) とリモート (GitHub)
+              の関係
+            </h2>
+            <div class="hand-drawn">
+              <!-- prettier-ignore -->
+              <div class="mermaid">
+                graph LR
+                    subgraph "ローカル環境"
+                        direction LR
+                        A["作業ディレクトリ"] -- git add --> B(ステージングエリア);
+                        B -- git commit --> C{"ローカルリポジトリ<br>.git"};
+                    end
+                
+                    subgraph "リモートサーバー"
+                        D[リモートリポジトリ];
+                    end
+                
+                    C -- git push --> D;
+                    D -- git pull / fetch --> C;
+                    D -- git clone --> C;
+                
+                    style A fill:#fff,stroke:#333,stroke-width:2px
+                    style B fill:#eee,stroke:#999,stroke-width:1px
+                    style C fill:#ccf,stroke:#66f,stroke-width:2px
+                    style D fill:#fcc,stroke:#f66,stroke-width:2px
+                    style ローカル環境 fill:#e8f5e9,stroke:#a5d6a7
+                    style リモートサーバー fill:#e3f2fd,stroke:#90caf9
+              </div>
+            </div>
+            <div class="explanation" style="margin-top: 15px">
+              <p>
+                <strong>ローカル環境:</strong>
+                あなたのPC内での作業を示します。ファイルを編集し(Working
+                Dir)、<code>git add</code>でステージングし、<code
+                  >git commit</code
+                >でローカルリポジトリに変更を記録します。
+              </p>
+              <p>
+                <strong>リモートサーバー:</strong>
+                GitHub上のリポジトリを示します。
+              </p>
+              <p><strong>連携:</strong></p>
+              <ul>
+                <li>
+                  <code>git push</code>:
+                  ローカルの変更をリモートにアップロードします。
+                </li>
+                <li>
+                  <code>git pull / fetch</code>:
+                  リモートの変更をローカルにダウンロードします。(pullはマージも行います)
+                </li>
+                <li>
+                  <code>git clone</code>:
+                  リモートリポジトリをローカルにコピーしてきます。(最初の取得)
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="card accent">
+            <h2><i class="fas fa-cogs icon"></i>基本用語解説</h2>
+            <div class="bubble">
+              <p>Gitを使う前に知っておきたい基本的な用語を覚えましょう。</p>
+            </div>
+
+            <h3>リポジトリ (Repository)</h3>
+            <p>
+              プロジェクトのファイルとその変更履歴を保存する場所です。<br />
+              <span class="marker">ローカルリポジトリ</span>:
+              自分のコンピュータ上のリポジトリ<br />
+              <span class="marker">リモートリポジトリ</span>:
+              GitHubなどのサーバー上のリポジトリ
+            </p>
+
+            <h3>コミット (Commit)</h3>
+            <p>
+              変更を記録する操作。スナップショットを作成します。各コミットには一意のID（ハッシュ値）が割り当てられます。
+            </p>
+
+            <h3>ステージングエリア (Staging Area / Index)</h3>
+            <p>
+              次のコミットに含める変更内容を準備する場所です。作業ディレクトリでの変更の中から、コミットしたいものだけを選んで
+              <code>git add</code>
+              コマンドで追加します。インデックスとも呼ばれます。
+            </p>
+
+            <h3>ブランチ (Branch)</h3>
+            <p>
+              独立した開発ラインを表します。メインの開発ラインから分岐して並行開発ができます。
+            </p>
+
+            <h3>マージ (Merge)</h3>
+            <p>異なるブランチの変更を統合する操作です。</p>
+          </div>
+
+          <div class="card secondary">
+            <h2><i class="fas fa-code-branch icon"></i>ブランチとは？</h2>
+            <div class="hand-drawn">
+              <p>
+                ブランチは、開発作業を分岐させて、元のバージョンに影響を与えずに新しい機能の追加やバグ修正を行うための仕組みです。複数の作業を並行して進めることができます。
+              </p>
+              <!-- prettier-ignore -->
+              <div class="mermaid">
+                graph TD
+                    subgraph MainBranch ["mainブランチ"]
+                        direction LR
+                        commitA --> commitB;
+                        commitB --> commitC;
+                    end
+
+                    subgraph FeatureBranch ["featureブランチ"]
+                        direction LR
+                        commitB --> featureCommit1;
+                        featureCommit1 --> featureCommit2;
+                    end
+
+                    style MainBranch fill:#e3f2fd,stroke:#90caf9
+                    style FeatureBranch fill:#e8f5e9,stroke:#a5d6a7
+              </div>
+            </div>
+            <div class="explanation" style="margin-top: 15px">
+              <p><strong>図の説明:</strong></p>
+              <ul>
+                <li>
+                  <code>mainブランチ</code>:
+                  プロジェクトの安定した本線となる履歴です。
+                </li>
+                <li>
+                  <code>featureブランチ</code>:
+                  <code>mainブランチ</code>の特定のコミット
+                  (<code>commitB</code>) から分岐し、新しい機能の開発
+                  (<code>featureCommit1</code>, <code>featureCommit2</code>)
+                  を行っています。
+                </li>
+                <li>
+                  このように分岐させることで、<code>mainブランチ</code>の安定性を保ちながら、安全に新しい開発を進めることができます。
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="card accent">
+            <h2><i class="fas fa-code-merge icon"></i>マージとは？</h2>
+            <div class="hand-drawn">
+              <p>
+                マージは、分岐したブランチでの変更内容を別のブランチ（通常は元のブランチ）に取り込む操作です。これにより、並行して進められていた開発作業を統合します。
+              </p>
+              <!-- prettier-ignore -->
+              <div class="mermaid">
+                graph TD
+                    subgraph MainBranch ["mainブランチ"]
+                        direction LR
+                        commitA --> commitB;
+                        commitB --> commitC;
+                        commitC --> MergeCommit[mergeCommit];
+                    end
+
+                    subgraph FeatureBranch ["featureブランチ"]
+                        direction LR
+                        commitB --> featureCommit1;
+                        featureCommit1 --> featureCommit2;
+                    end
+
+                    featureCommit2 --> MergeCommit;
+
+                    style MergeCommit fill:#f9f,stroke:#333,stroke-width:2px
+                    style MainBranch fill:#e3f2fd,stroke:#90caf9
+                    style FeatureBranch fill:#e8f5e9,stroke:#a5d6a7
+              </div>
+            </div>
+            <div class="explanation" style="margin-top: 15px">
+              <p><strong>図の説明:</strong></p>
+              <ul>
+                <li>
+                  <code>commitB</code>から<code>mainブランチ</code>
+                  (→<code>commitC</code>) と<code>featureブランチ</code>
+                  (→<code>featureCommit1</code>→<code>featureCommit2</code>)
+                  が分岐しています。
+                </li>
+                <li>
+                  マージ操作により、<code>mainブランチ</code>の先端
+                  (<code>commitC</code>) と<code>featureブランチ</code>の先端
+                  (<code>featureCommit2</code>)
+                  の両方の変更内容が統合され、新しい「マージコミット」(<code>M</code>)
+                  が作成されました。
+                </li>
+                <li>
+                  これにより、<code>featureブランチ</code>で行われた開発成果が<code>mainブランチ</code>の履歴に統合されます。
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="card primary">
+            <h2>
+              <i class="fas fa-download icon"></i>Git & GitHubのセットアップ
+            </h2>
+
+            <h3>1. Gitのインストール</h3>
+
+            <h4>Windows</h4>
+            <div class="steps">
+              <div class="step">
+                <p>
+                  Git for Windowsをダウンロード:
+                  <a href="https://git-scm.com/download/win" target="_blank"
+                    >https://git-scm.com/download/win</a
+                  >
+                </p>
+              </div>
+              <div class="step">
+                <p>
+                  インストーラを実行し、基本的にはデフォルト設定でインストール
+                </p>
+              </div>
+              <div class="step">
+                <p>「Git Bash」と「Git GUI」がインストールされます</p>
+              </div>
+            </div>
+
+            <h4>macOS</h4>
+            <div class="code-block">
+              <div class="code-command">brew install git</div>
+              <div class="code-output">Updating Homebrew...</div>
+            </div>
+            <p>または「Xcode Command Line Tools」をインストール:</p>
+            <div class="code-block">
+              <div class="code-command">xcode-select --install</div>
+            </div>
+
+            <h4>Linux (Ubuntu/Debian)</h4>
+            <div class="code-block">
+              <div class="code-command">sudo apt update</div>
+              <div class="code-command">sudo apt install git</div>
+            </div>
+
+            <h3>2. インストールの確認</h3>
+            <div class="code-block">
+              <div class="code-command">git --version</div>
+              <div class="code-output">git version 2.33.0</div>
+            </div>
+
+            <div class="tip">
+              <p>
+                初めてのGit設定では、ユーザー名とメールアドレスを設定しておくと良いでしょう。
+              </p>
+              <div class="code-block">
+                <div class="code-command">
+                  git config --global user.name "あなたの名前"
+                </div>
+                <div class="code-command">
+                  git config --global user.email "あなたのメール"
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card secondary">
+            <h2><i class="fab fa-github icon"></i>GitHubアカウントの作成</h2>
+
+            <div class="steps">
+              <div class="step">
+                <p>
+                  <a href="https://github.com/join" target="_blank"
+                    >GitHub登録ページ</a
+                  >にアクセス
+                </p>
+              </div>
+              <div class="step">
+                <p>ユーザー名、メールアドレス、パスワードを入力</p>
+              </div>
+              <div class="step">
+                <p>アカウント確認のステップを完了</p>
+              </div>
+              <div class="step">
+                <p>2要素認証の設定（推奨）</p>
+              </div>
+            </div>
+
+            <div class="note">
+              <p>
+                GitHubへの接続にはHTTPSまたはSSH認証を使用できます。初心者にはHTTPSがお勧めです。より安全な接続にはSSH鍵を設定しましょう。
+              </p>
+            </div>
+
+            <h3>SSH鍵の設定 (オプション)</h3>
+            <div class="code-block">
+              <div class="code-command">
+                ssh-keygen -t ed25519 -C "your_email@example.com"
+              </div>
+              <div class="code-output">
+                Generating public/private ed25519 key pair.
+              </div>
+              <div class="code-command">cat ~/.ssh/id_ed25519.pub</div>
+              <div class="code-output">
+                ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI... your_email@example.com
+              </div>
+            </div>
+            <p>
+              表示された公開鍵をコピーして、GitHubの設定画面の「SSH and GPG
+              keys」セクションに追加します。
+            </p>
+          </div>
+
+          <div class="card">
+            <h2>
+              <i class="fas fa-laptop-code icon"></i>Git GUI・統合開発環境
+            </h2>
+            <p>
+              コマンドラインが苦手な方は、以下のツールを使うと視覚的にGitを操作できます。
+            </p>
+
+            <div class="comparison-table">
+              <table>
+                <tr>
+                  <th>ツール名</th>
+                  <th>特徴</th>
+                  <th>プラットフォーム</th>
+                </tr>
+                <tr>
+                  <td>GitHub Desktop</td>
+                  <td>シンプルで使いやすい、GitHubとの連携が強力</td>
+                  <td>Windows, macOS</td>
+                </tr>
+                <tr>
+                  <td>Sourcetree</td>
+                  <td>高機能、Git Flow対応</td>
+                  <td>Windows, macOS</td>
+                </tr>
+                <tr>
+                  <td>VS Code</td>
+                  <td>エディタにGit機能統合</td>
+                  <td>Windows, macOS, Linux</td>
+                </tr>
+                <tr>
+                  <td>Git Kraken</td>
+                  <td>美しいUI、強力なマージ機能</td>
+                  <td>Windows, macOS, Linux</td>
+                </tr>
+              </table>
+            </div>
+
+            <div class="warning">
+              <p>
+                GUIツールは便利ですが、Gitの基本的なコマンドを理解しておくと、トラブル時の対応がスムーズです。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-indicator">
+        <div class="page-dot active"></div>
+        <div class="page-dot"></div>
+        <div class="page-dot"></div>
+        <div class="page-dot"></div>
+      </div>
+
+      <div class="navigation">
+        <a href="index.html" class="nav-button back"
+          ><i class="fas fa-arrow-left"></i> 目次に戻る</a
+        >
+        <a href="page2.html" class="nav-button"
+          >次へ: 基本操作 <i class="fas fa-arrow-right"></i
+        ></a>
+      </div>
+
+      <footer class="footer">
+        <p>
+          © 2023 Git/GitHub グラフィックチュートリアル | 作成者：あなたの名前
+        </p>
+      </footer>
+    </div>
+  </body>
+</html>
